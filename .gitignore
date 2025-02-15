@@ -35,3 +35,7 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+plan.cache
+resources/ses-lambda/venv
+resources/ses-lambda/deployable
+resources/ses-lambda/lambda_function.zip
