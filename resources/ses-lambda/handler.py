@@ -12,10 +12,7 @@ recaptcha_secret = os.getenv('RECAPTCHA_KEY')
 
 def lambda_handler(event, context):
     try:
-        # Extract the domain (Host) from the request headers
-        domain = event['headers'].get('Origin') or event['headers'].get('Referer')
-        if domain:
-            domain = domain.split('/')[2]  # Extract the domain part (remove the scheme)
+        domain = event['headers'].get('CfDomain')
 
         # Query DynamoDB for the email address associated with the domain
         response = dynamodb.get_item(
@@ -27,8 +24,8 @@ def lambda_handler(event, context):
         
         if 'Item' not in response:
             return {
-                'statusCode': 400,
-                'body': json.dumps({'message': f'Domain {domain} not found in lookup table'})
+                'statusCode': 401,
+                'body': json.dumps({'message': f'Domain not authorised.'})
             }
 
         recipient_email = response['Item']['EmailAddress']['S']
@@ -81,7 +78,7 @@ def lambda_handler(event, context):
         ses.send_email(**email_params)
 
         return {
-            'statusCode': 200,
+            'statusCode': 201,
             'body': json.dumps({'message': 'Form submitted successfully!'})
         }
 
@@ -89,5 +86,5 @@ def lambda_handler(event, context):
         print(f"Error: {str(e)}")
         return {
             'statusCode': 500,
-            'body': json.dumps({'message': f'Error processing the request: {str(e)}'})
+            'body': json.dumps({'message': f'Error processing the request'})
         }
