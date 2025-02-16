@@ -34,9 +34,10 @@ def lambda_handler(event, context):
         # Parse form data from the request body
         body = json.loads(event['body'])
         name = body['name']
+        name = body['telephone']
         email = body['email']
         message = body['message']
-        recaptcha_token = body['recaptchaToken']
+        recaptcha_token = body['recaptcha_response']
 
         # Verify reCAPTCHA
         recaptcha_url = 'https://www.google.com/recaptcha/api/siteverify'
@@ -86,5 +87,5 @@ def lambda_handler(event, context):
         print(f"Error: {str(e)}")
         return {
             'statusCode': 500,
-            'body': json.dumps({'message': f'Error processing the request'})
+            'body': json.dumps({'message': f'Error processing the request.'})
         }
